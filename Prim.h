@@ -14,14 +14,15 @@ typedef struct {
     VerT vertex ;//顶点
 }MinSpanTree;
 
+//普里姆算法生成最小生成树的关键是：从两个点的集合中找权值对小的边
 void Prim(AdjMGraph G, MinSpanTree closeVertex[]){
     //用普里姆算法建立带权图G的最小生成树closeVertex
     VerT x ;
     int n = G.Vertices.size, minCost ;
     int *lowCost = (int *)malloc(sizeof(int) * n) ;
-    int i, j, k ;
+    int k ;
     for (int i = 1; i < n; ++i) {
-        lowCost[i] = G.edge[00][i] ;//初始化
+        lowCost[i] = G.edge[0][i] ;//初始化权值
     }
 
     ListGet(&G.Vertices, 0, &x) ;//取顶点

@@ -4,15 +4,15 @@
 
 #ifndef MINISPANNINGTREE_ADJMGRAPH_H
 #define MINISPANNINGTREE_ADJMGRAPH_H
+//该图为有向带权图
 
 #define MaxVertices 10
 #define MaxWeight 10000
+#define MaxSize 100
+typedef char DataType ;
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#define MaxSize 100
-typedef char DataType ;
 
 //静态指针：伪指针
 typedef struct {
@@ -23,9 +23,9 @@ typedef struct {
 
 //邻接矩阵的存储方法
 typedef struct {
-    SeqList Vertices ;
-    int edge[MaxVertices][MaxVertices] ;
-    int numOfEdges ;
+    SeqList Vertices ;//伪链表->存储顶点信息
+    int edge[MaxVertices][MaxVertices] ;//矩阵显示边的关系
+    int numOfEdges ;//有效边的个数
 }AdjMGraph;
 
 typedef struct {
@@ -50,11 +50,11 @@ int ListInsert(SeqList *L, int i, DataType x){
     }
     else{
         for (int j = L->size; j > i; j--) {
-            L->list[j] = L->list[j - 1] ;
+            L->list[j] = L->list[j - 1] ;//后退
         }
 
-        L->list[i] = x ;
-        L->size ++ ;
+        L->list[i] = x ;//插入
+        L->size ++ ;//+1
 
     }
     return 1 ;
@@ -65,7 +65,7 @@ int ListGet(SeqList *L, int i, DataType *x){
         printf("取出失敗,參數有誤\n") ;
     }
 
-    *x = L->list[i] ;
+    *x = L->list[i] ;//得到数据
     return 1 ;
 }
 
@@ -76,9 +76,9 @@ int ListDelete(SeqList *L, int i, DataType *x){
 
     *x = L->list[i] ;
 
-    for (int j = i + 1; j <= L->size - 1; j++) L->list[j - 1] = L->list[j] ;
+    for (int j = i + 1; j <= L->size - 1; j++) L->list[j - 1] = L->list[j] ;//与插入恰好相反
 
-    L->size -- ;
+    L->size -- ;//-1
 
 
     return 1 ;
@@ -88,7 +88,7 @@ void ListPrint(SeqList *L){
     int length = ListLength(*L) ;
 
     for (int i = 0; i < length; ++i) {
-        printf(" %4d", L->list[i]) ;
+        printf("%-3d", L->list[i]) ;
     }
 
     printf("\n") ;
@@ -99,21 +99,21 @@ void Initiate(AdjMGraph *G, int n){
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             if (i == j)
-                G->edge[i][j] = 0 ;
+                G->edge[i][j] = 0 ;//没有自己的环
             else
-                G->edge[i][j] = MaxWeight ;//MaxWeight视为无穷大
+                G->edge[i][j] = MaxWeight ;//MaxWeight视为无穷大，代表不是通路
         }
     }
     G->numOfEdges = 0 ;//边的条数0
-    //Node**初始化顺序表
+    //初始化顺序表
     ListInitiate(&G->Vertices) ;
 }
 
 void InsertVertex(AdjMGraph *G, DataType vertex){
     //在图中增加一个顶点
-    ListInsert(&G->Vertices, G->Vertices.size, vertex);
+    ListInsert(&G->Vertices, G->Vertices.size, vertex);//在G->Vertices.size这个位置上，写入新数据vertex
 }
-
+//该图为有向带权图
 void InsertEdge(AdjMGraph *G, int v1, int v2, int weight){
     //在图中增加一条有向边，对于增加一条无向边可通过增加两条有向边完成
     if(v1 < 0 || v1 > G->Vertices.size || v2 < 0 || v2 > G->Vertices.size) {
@@ -152,7 +152,7 @@ int GetFirstVex(AdjMGraph G, int v){
     }
 
     for(col = 0; col <= G.Vertices.size; col++)
-        if(G.edge[v][col] > 0 &&G.edge[v][col] < MaxWeight)
+        if(G.edge[v][col] > 0 && G.edge[v][col] < MaxWeight)//代表这是个通路
             return col;
     return -1;
 }
@@ -167,8 +167,9 @@ int GetNextVex(AdjMGraph G, int v1, int v2){
         exit(1);
     }
 
+    //寻找v2下一个临接顶点，下表关系就是+1
     for(col = v2+1; col <= G.Vertices.size; col++)
-        if(G.edge[v1][col] > 0 && G.edge[v1][col] < MaxWeight)
+        if(G.edge[v1][col] > 0 && G.edge[v1][col] < MaxWeight)//通路
             return col;
     return -1;
 }
